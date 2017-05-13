@@ -64,10 +64,18 @@
 			}
 		</script>
 	</head>
-	<body >
-		<h1>Pleace make poast</h1>
+	<body>
+		<h1>this is 4chan</h1>
+		<p>pleace make 4chanz post.</p>
 		<textarea id="textPost" style="width:400; height:100"></textarea>
 		<button type="button" onclick="bounceTime()">Submit poast</button>
-		<script>document.getElementById("textPost").focus();</script>
+		<script>
+			document.getElementById("textPost").focus();
+			document.getElementById("textPost").addEventListener('keyup', function(e) {
+				if (e.keyCode === 13 && !e.shiftKey) {
+					bounceTime();
+				}
+			});
+		</script>
 	</body>
 </html>

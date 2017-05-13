@@ -28,3 +28,6 @@ it got second place, and the majority of the voters gave it a 6/7 or 7/7 star ra
 
 I decided the prompt for this contest: "a soothing webpage you could spend hours on. JavaScript
 required." I bet that it could be a good component of a Tumblr theme.
+
+# License
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.

@@ -1,0 +1,180 @@
+<html>
+	<head>
+		<title>SHAMBLEPLaNTS</title> 
+	</head>
+	
+	<script>
+		//CONSTANTS
+		//size
+		var COLS = 20;
+		var ROWS = 20;
+		//types
+		var WALL = "#000000";
+		var AIR = "#B9C9EC";
+		var STEM = "#38AC45";
+		var SEED = "#999894";
+		var BUD = "#E40B27";
+		var DIRT = "#63461B";
+		//world array
+		var world;
+		
+		//FUNCTIONS
+		function createWorld() {
+			if(world) throw "error: world already exists.";
+			
+			//create world array
+			world = [];
+			var dirtLevel = 14;
+			for(var c = 0; c < COLS; ++c) {
+				world[c] = [];
+				for(var r = 0; r < ROWS; ++r) {
+					world[c][r] = null;
+				}
+			}
+			
+			var worldTable = document.getElementById("plantTable");
+			//add the table
+			for(var r = 0; r < ROWS; ++r) {
+				var row = worldTable.insertRow(r);
+				row.id = "row"+r;
+				row.style.height=10;
+				for(var c = 0; c < COLS; ++c) {
+					var col = row.insertCell(c);
+					col.style.width = 10;
+					col.id = "row"+r+"col"+c;
+				}
+			}
+		}
+		
+		function initWorld() {
+			//create world array
+			var dirtLevel = 14;
+			for(var c = 0; c < COLS; ++c) {
+				for(var r = 0; r < ROWS; ++r) {
+					if(c===0||c===COLS-1||r===0||r===ROWS-1) world[c][r] = WALL;
+					else world[c][r] = (r>=dirtLevel)?((Math.random()<0.04)?SEED:DIRT):AIR;
+				}
+			}
+		}
+		
+		function deleteWorld() {
+			//can't remove if it doesn't exist
+			if(!world) throw "error: no world to delete!";
+			//remove all from table
+			var worldTable = document.getElementById("plantTable");
+			while(worldTable.firstChild) {
+				worldTable.removeChild(worldTable.firstChild);
+			}
+			//world goodbye
+			world = null;
+		}
+		
+		function updateView() {
+			for(var r = 0; r < ROWS; ++r) {
+				for(var c = 0; c < COLS; ++c) {
+					var cell = document.getElementById("row"+r+"col"+c);
+					cell.style.backgroundColor = world[c][r];
+				}
+			}
+		}
+		
+		function updateWorld() {
+			//fill in the new array and return it.
+			var last = world;
+			var next = [];
+			var hasChanged = false;
+			for(var c = 0; c < COLS; ++c) {
+				next[c] = [];
+				for(var r = 0; r < ROWS; ++r) {
+					var around = getNeighbors(last, c, r);
+					next[c][r] = nextCell(around);
+					if(next[c][r] !== last[c][r]) hasChanged = true;
+				}
+			}
+			world = next;
+			return hasChanged;
+		}
+		
+		function getNeighbors(last, c, r) {
+			var around = 
+				[
+					[
+						(c===0||r===0)?WALL:last[c-1][r-1],
+						(c===0)?WALL:last[c-1][r],
+						(c===0||r===ROWS-1)?WALL:last[c-1][r+1]
+					],
+					[
+						(r===0)?WALL:last[c][r-1],
+						last[c][r],
+						(r===ROWS-1)?WALL:last[c][r+1]
+					],
+					[
+						(c===COLS-1||r===0)?WALL:last[c+1][r-1],
+						(c===COLS-1)?WALL:last[c+1][r],
+						(c===COLS-1||r===ROWS-1)?WALL:last[c+1][r+1]
+					]
+				];
+			return around;
+		}
+		
+		function nextCell(around) {
+			var LEFT = 0, UP = 0;
+			var DOWN = 2, RIGHT = 2;
+			var o = 1;
+			
+			//unchanging
+			if(around[o][o] === WALL) return WALL;
+			if(around[o][o] === STEM) return STEM;
+			if(around[o][o] === SEED) return SEED;
+			//bud 2 stem
+			if(around[o][o] === BUD) return STEM;
+			//sprout
+			if(around[o][DOWN] === SEED) return BUD;
+			if(around[o][o] === DIRT && around[o][DOWN] === BUD) return BUD;
+			//dirt
+			if(around[o][o] === DIRT) return DIRT;
+			//growth
+			if(around[o][DOWN] === BUD ||
+				around[LEFT][DOWN] === BUD ||
+				around[RIGHT][DOWN] === BUD ||
+				around[LEFT][o] === BUD ||
+				around[RIGHT][o] === BUD)
+				if(Math.random()<0.3) return BUD;
+			
+			//default
+			return around[o][o]
+		}
+		
+		function start() {
+			//if world isn't there yet, create one
+			if(!world) createWorld();
+			
+			//initialize world
+			initWorld();
+			
+			//show it as it is
+			updateView();
+			
+			//frame function
+			var timerId;
+			function frame() {
+				var changed = updateWorld();
+				if(changed) updateView();
+				else window.clearInterval(timerId);
+			}
+			
+			//start.
+			timerId = window.setInterval(frame, 100);
+		}
+		
+		
+	</script>
+
+	<h1>Plant geame</h1>
+	<p>Welcome! This is a plant simulator.</p>
+	<p>Please press the "start" button to see some plants! It's random every time so please try it a few times.</p>
+	
+	<button type="button" onclick="start()">Start!</button>
+	<table id="plantTable">
+	</table>
+</html>

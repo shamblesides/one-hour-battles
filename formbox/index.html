@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title>4thechanzz</title>
+		<style>
+			html, body {overflow:hidden;}
+		</style>
+		<script>
+			function bounceTime() {
+				//text post box
+				var prevItem = document.getElementById("textPost");
+				//movement vars
+				var x = prevItem.offsetLeft + 10
+				var y = prevItem.offsetTop;
+				var height = parseInt(prevItem.style.height);
+				var width = parseInt(prevItem.style.width);
+				var xVel = Math.floor(Math.random()*6)*4 - 10;
+				var yVel = 0;
+				var yAcc = 1;
+				//create box
+				var item = document.createElement("textarea");
+				item.value = prevItem.value;
+				item.style.position = "absolute";
+				item.style.left = x;
+				item.style.top = y;
+				item.style.width = prevItem.style.width;
+				item.style.height = prevItem.style.height;
+				item.style.resize = "none";
+				//add box to page
+				document.getElementsByTagName("body")[0].appendChild(item);
+				//reset other box
+				prevItem.value = "";
+				prevItem.style.width = Math.round(Math.random()*350) + 50;
+				prevItem.style.height = Math.round(Math.random()*350) + 50;
+				prevItem.focus();
+				//timer for box physics
+				var id = window.setInterval(function() {
+					//accellerate
+					yVel += yAcc;
+					//move
+					y += yVel;
+					x += xVel;
+					//bounce at bottom
+					if(y+height > window.innerHeight) {
+						y = window.innerHeight-height;
+						yVel = -Math.floor(Math.abs(yVel* -0.85));
+						if(yVel === 0) {
+							
+							window.clearInterval(id);
+						}
+					}
+					//bounce at sides
+					if(x+width > window.innerWidth) {
+						x = window.innerWidth-width;
+						xVel = -Math.abs(xVel);
+					}
+					else if(x < 0) {
+						x = 0;
+						xVel = Math.abs(xVel);
+					}
+					//set element position
+					item.style.left = x;
+					item.style.top = y;
+				}, 20);
+			}
+		</script>
+	</head>
+	<body >
+		<h1>Pleace make poast</h1>
+		<textarea id="textPost" style="width:400; height:100"></textarea>
+		<button type="button" onclick="bounceTime()">Submit poast</button>
+		<script>document.getElementById("textPost").focus();</script>
+	</body>
+</html>
